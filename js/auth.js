@@ -2,35 +2,47 @@
 
 // Helper to show dynamic toast alerts
 function showToast(message, type = 'success') {
-    // Remove existing toasts first
-    const existingToasts = document.querySelectorAll('.toast');
-    existingToasts.forEach(t => t.remove());
+    console.log(`[${type.toUpperCase()}] ${message}`);
 
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    
-    // Choose icon based on type
-    const iconSvg = type === 'success' 
-        ? `<svg class="toast-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>`
-        : `<svg class="toast-icon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" /></svg>`;
+    // Find active form in the document
+    const activeForm = document.querySelector('form');
+    if (!activeForm) return;
 
-    toast.innerHTML = `
-        ${iconSvg}
-        <span>${message}</span>
-    `;
-    
-    document.body.appendChild(toast);
-    
-    // Trigger animation frame
-    setTimeout(() => {
-        toast.classList.add('show');
-    }, 10);
-    
-    // Auto remove after 3.5 seconds
-    setTimeout(() => {
-        toast.classList.remove('show');
-        setTimeout(() => toast.remove(), 400);
-    }, 3500);
+    // Remove any existing inline feedback in this form
+    const existingFeedback = activeForm.querySelector('.inline-feedback');
+    if (existingFeedback) existingFeedback.remove();
+
+    // Create inline feedback banner
+    const feedback = document.createElement('div');
+    feedback.className = `inline-feedback ${type}`;
+    feedback.style.padding = '12px 16px';
+    feedback.style.borderRadius = '8px';
+    feedback.style.marginBottom = '20px';
+    feedback.style.fontSize = '14px';
+    feedback.style.fontWeight = '500';
+    feedback.style.animation = 'fadeIn 0.3s ease';
+
+    if (type === 'success') {
+        feedback.style.background = '#ecfdf5';
+        feedback.style.color = '#10b981';
+        feedback.style.border = '1px solid rgba(16, 185, 129, 0.2)';
+    } else {
+        feedback.style.background = '#fef2f2';
+        feedback.style.color = '#ef4444';
+        feedback.style.border = '1px solid rgba(239, 68, 68, 0.2)';
+    }
+
+    feedback.textContent = message;
+
+    // Insert at the top of the form
+    activeForm.insertBefore(feedback, activeForm.firstChild);
+
+    // Auto remove success feedback after 3 seconds
+    if (type === 'success') {
+        setTimeout(() => {
+            feedback.remove();
+        }, 3000);
+    }
 }
 
 // Retrieve users from localStorage
@@ -84,20 +96,8 @@ function handleSignup(username, userId, password, acType) {
     users.push(newUser);
     saveUsers(users);
     
-    // Show success overlay modal
-    const overlay = document.getElementById('successOverlay');
-    if (overlay) {
-        overlay.classList.add('active');
-        setTimeout(() => {
-            overlay.classList.remove('active');
-            window.location.href = 'index.html';
-        }, 2500);
-    } else {
-        showToast('Account created successfully! Redirecting...', 'success');
-        setTimeout(() => {
-            window.location.href = 'index.html';
-        }, 1500);
-    }
+    // Redirect immediately to login page
+    window.location.href = 'index.html';
     return true;
 }
 
@@ -137,9 +137,6 @@ function handleLogin(userId, password, role, rememberMe) {
             userId: userId,
             role: role // Redirects to selected login role (Admin or Customer)
         };
-        
-        // Inform user via toast about fallback login
-        showToast(`Logged in via demo access as ${role}.`, 'success');
     }
     
     // Save session

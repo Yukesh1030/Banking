@@ -244,28 +244,16 @@ function setupTransferForm() {
         // Save back to local storage
         localStorage.setItem('customer_mock_data', JSON.stringify(customerData));
 
-        // Show success animation overlay
-        const overlay = document.getElementById('transferSuccessOverlay');
-        if (overlay) {
-            overlay.classList.add('active');
-            
-            // Set details inside Success screen
-            document.getElementById('successTransferAmount').textContent = `$${amt.toLocaleString('en-US', { minimumFractionDigits: 2 })}`;
-            document.getElementById('successTransferRecipient').textContent = `${recipient} (${acNum})`;
-
-            setTimeout(() => {
-                overlay.classList.remove('active');
-                form.reset();
-                
-                // Re-render UI dashboard details
-                renderCustomerOverview();
-                renderTransactionsTable();
-                
-                // Swap view back to "My Accounts" tab
-                const accountsTab = document.querySelector('[data-section="accounts-section"]');
-                if (accountsTab) accountsTab.click();
-            }, 3000);
-        }
+        // Update states directly without overlay popups
+        form.reset();
+        
+        // Re-render UI dashboard details
+        renderCustomerOverview();
+        renderTransactionsTable();
+        
+        // Swap view back to "My Accounts" tab
+        const accountsTab = document.querySelector('[data-section="accounts-section"]');
+        if (accountsTab) accountsTab.click();
     });
 }
 
