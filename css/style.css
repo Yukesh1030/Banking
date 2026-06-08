@@ -877,6 +877,10 @@ select.form-input {
     margin-bottom: 40px;
 }
 
+.card-section-wrapper > div {
+    min-width: 0;
+}
+
 /* Tables Styling */
 .table-container {
     overflow-x: auto;
