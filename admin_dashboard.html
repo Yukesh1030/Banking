@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | STACKLY Bank</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js" defer></script>
+    <script>
+        // Inline auth check to prevent FOUC (flash of unauthenticated content)
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = validateSession('Admin');
+            if (session) {
+                initAdminDashboard();
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="dashboard-layout animate-fade-in">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <h2>STACK<span>LY</span></h2>
+                </div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li>
+                    <a class="menu-item active" data-section="accounts-section">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                        </svg>
+                        Accounts
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" data-section="support-section">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
+                        </svg>
+                        Support
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" data-section="reports-section">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                        </svg>
+                        Reports
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" data-section="employees-section">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        </svg>
+                        Employees
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avatar" id="userAvatar">AD</div>
+                    <div class="user-info">
+                        <div class="user-name" id="sidebarUserName">Administrator</div>
+                        <div class="user-role" id="sidebarUserId">admin@stackly.com</div>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="dashboard-main">
+            <!-- Dashboard Header -->
+            <header class="dashboard-header">
+                <div class="header-title-area">
+                    <h1 id="welcomeHeader">Administrative Command Center</h1>
+                    <p>System metrics, user validations, and staff operations portal.</p>
+                </div>
+                <div class="header-actions">
+                    <span class="date-badge" id="currentDate">Mon, Jun 08, 2026</span>
+                    <button class="mobile-nav-toggle" id="mobileNavToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Dashboard Content Area -->
+            <div class="dashboard-content">
+                
+                <!-- Quick Stats row -->
+                <div class="stats-grid">
+                    <div class="stats-card glass-panel">
+                        <div class="stats-info">
+                            <h3>Pending Audits</h3>
+                            <div class="value" id="adminPendingCount">2</div>
+                            <div class="trend trend-up">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                                Approval Queue
+                            </div>
+                        </div>
+                        <div class="stats-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>
+                        </div>
+                    </div>
+                    <div class="stats-card glass-panel">
+                        <div class="stats-info">
+                            <h3>Support Queue</h3>
+                            <div class="value" id="adminOpenTickets">2</div>
+                            <div class="trend trend-down">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6" /></svg>
+                                Open Tickets
+                            </div>
+                        </div>
+                        <div class="stats-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" /></svg>
+                        </div>
+                    </div>
+                    <div class="stats-card glass-panel">
+                        <div class="stats-info">
+                            <h3>Authorized Staff</h3>
+                            <div class="value" id="adminEmployeeCount">3</div>
+                            <div class="trend trend-up">Active Personnel</div>
+                        </div>
+                        <div class="stats-icon">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SECTION: ACCOUNTS -->
+                <section id="accounts-section" class="content-section active">
+                    <div class="table-title-bar">
+                        <h2>Pending Account Requests</h2>
+                    </div>
+                    <div class="table-container glass-panel">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Applicant Name / ID</th>
+                                    <th>Email Address</th>
+                                    <th>Account Type</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pendingAccountsBody">
+                                <!-- Loaded via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- SECTION: SUPPORT -->
+                <section id="support-section" class="content-section">
+                    <div class="table-title-bar">
+                        <h2>Active Ticket Queue</h2>
+                    </div>
+                    <div class="table-container glass-panel">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Ticket Code</th>
+                                    <th>User & Subject</th>
+                                    <th>Severity</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="supportTicketsBody">
+                                <!-- Loaded via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- SECTION: REPORTS -->
+                <section id="reports-section" class="content-section">
+                    <div class="grid-reports">
+                        <!-- Graph 1 -->
+                        <div class="chart-box glass-panel">
+                            <div class="chart-header">
+                                <h3>Transactional Volume (Weekly)</h3>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background: var(--primary);"></span>
+                                        <span>Deposits ($k)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="analytics-chart-container">
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="65%" data-value="$65k"></div>
+                                    <span class="bar-label">Mon</span>
+                                </div>
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="85%" data-value="$85k"></div>
+                                    <span class="bar-label">Tue</span>
+                                </div>
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="40%" data-value="$40k"></div>
+                                    <span class="bar-label">Wed</span>
+                                </div>
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="95%" data-value="$95k"></div>
+                                    <span class="bar-label">Thu</span>
+                                </div>
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="70%" data-value="$70k"></div>
+                                    <span class="bar-label">Fri</span>
+                                </div>
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="30%" data-value="$30k"></div>
+                                    <span class="bar-label">Sat</span>
+                                </div>
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="15%" data-value="$15k"></div>
+                                    <span class="bar-label">Sun</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Graph 2 -->
+                        <div class="chart-box glass-panel">
+                            <div class="chart-header">
+                                <h3>Account Registration Growth</h3>
+                                <div class="chart-legend">
+                                    <div class="legend-item">
+                                        <span class="legend-color" style="background: var(--primary-dark);"></span>
+                                        <span>Users Registered</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="analytics-chart-container">
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="25%" data-value="120" style="background: var(--primary-gradient);"></div>
+                                    <span class="bar-label">Jan</span>
+                                </div>
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="42%" data-value="195" style="background: var(--primary-gradient);"></div>
+                                    <span class="bar-label">Feb</span>
+                                </div>
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="55%" data-value="260" style="background: var(--primary-gradient);"></div>
+                                    <span class="bar-label">Mar</span>
+                                </div>
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="78%" data-value="390" style="background: var(--primary-gradient);"></div>
+                                    <span class="bar-label">Apr</span>
+                                </div>
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="88%" data-value="450" style="background: var(--primary-gradient);"></div>
+                                    <span class="bar-label">May</span>
+                                </div>
+                                <div class="bar-wrapper">
+                                    <div class="chart-bar" data-height="100%" data-value="520" style="background: var(--primary-gradient);"></div>
+                                    <span class="bar-label">Jun</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- SECTION: EMPLOYEES -->
+                <section id="employees-section" class="content-section">
+                    <div class="card-section-wrapper">
+                        <!-- Add Employee Form -->
+                        <div>
+                            <div class="dashboard-card-form glass-panel">
+                                <h2>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" /></svg>
+                                    Add Personnel
+                                </h2>
+                                <form id="addEmployeeForm">
+                                    <div class="form-group">
+                                        <label for="empName">Full Name</label>
+                                        <div class="input-wrapper">
+                                            <input type="text" id="empName" class="form-input" placeholder="e.g. John Kent" style="padding-left:16px;" required autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="empEmail">Corporate Email</label>
+                                        <div class="input-wrapper">
+                                            <input type="email" id="empEmail" class="form-input" placeholder="e.g. john.k@stackly.com" style="padding-left:16px;" required autocomplete="off">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="empRole">System Role</label>
+                                        <div class="input-wrapper">
+                                            <select id="empRole" class="form-input" required>
+                                                <option value="Security Admin">Security Admin</option>
+                                                <option value="Compliance Officer">Compliance Officer</option>
+                                                <option value="Support Agent" selected>Support Agent</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary" style="margin-top:10px;">Authorize Member</button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- Employees List Table -->
+                        <div>
+                            <div class="table-title-bar">
+                                <h2>Authorized Staff Directory</h2>
+                            </div>
+                            <div class="table-container glass-panel">
+                                <table class="custom-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Staff Member</th>
+                                            <th>Corporate Email</th>
+                                            <th>Role</th>
+                                            <th>Status</th>
+                                            <th>Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="employeesTableBody">
+                                        <!-- Loaded via JS -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Ticket Reply Modal -->
+    <div class="modal-overlay" id="replyModal">
+        <div class="modal-card glass-panel">
+            <div class="modal-header">
+                <h3 id="replyModalTitle">Reply to Ticket: TKT-245</h3>
+                <button class="btn-close-modal" id="closeModalBtn">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                </button>
+            </div>
+            <form id="ticketReplyForm">
+                <div class="form-group">
+                    <label for="ticketReplyText">Resolution response</label>
+                    <textarea id="ticketReplyText" class="form-input" style="height:120px; padding-left:16px; resize:none;" placeholder="Type your response to email to user..." required autocomplete="off"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Response & Resolve</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

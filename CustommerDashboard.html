@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard | STACKLY Bank</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/auth.js"></script>
+    <script src="js/dashboard.js" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const session = validateSession('Customer');
+            if (session) {
+                initCustomerDashboard();
+            }
+        });
+    </script>
+</head>
+<body>
+    <div class="dashboard-layout animate-fade-in">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-logo">
+                    <h2>STACK<span>LY</span></h2>
+                </div>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li>
+                    <a class="menu-item active" data-section="accounts-section">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                        </svg>
+                        My Accounts
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" data-section="transfer-section">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                        </svg>
+                        Transfer Money
+                    </a>
+                </li>
+                <li>
+                    <a class="menu-item" data-section="transactions-section">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
+                        </svg>
+                        Transactions
+                    </a>
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <div class="sidebar-user">
+                    <div class="user-avatar" id="userAvatar">C</div>
+                    <div class="user-info">
+                        <div class="user-name" id="sidebarUserName">Customer</div>
+                        <div class="user-role" id="sidebarUserId">user@stackly.com</div>
+                    </div>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:16px;height:16px;"><path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+                    Logout
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content Panel -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <div class="header-title-area">
+                    <h1 id="welcomeHeader">Welcome Back!</h1>
+                    <p>Access your accounts, wire funds, and view statements securely.</p>
+                </div>
+                <div class="header-actions">
+                    <span class="date-badge" id="currentDate">Mon, Jun 08, 2026</span>
+                    <button class="mobile-nav-toggle" id="mobileNavToggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                
+                <section id="accounts-section" class="content-section active">
+                    <div class="card-section-wrapper">
+                        <div>
+                            <h2 style="margin-bottom: 20px; font-size: 18px; font-weight:600;">Active Digital Cards</h2>
+                            
+                            <div class="credit-card-container">
+                                <div class="credit-card" id="interactiveCard">
+                                    <div class="card-face card-front animate-float">
+                                        <div class="card-header-logo">
+                                            <div class="card-brand">STACK<span>CARD</span></div>
+                                            <div class="card-chip"></div>
+                                        </div>
+                                        <div>
+                                            <div class="card-number" id="cardDisplayNumber">4532 •••• •••• 9821</div>
+                                            <div style="font-size:9px; color:rgba(255,255,255,0.7); margin-bottom: 2px;">BALANCE</div>
+                                            <div id="cardBalance" style="font-size:20px; font-weight:700; letter-spacing:0.5px;">$24,590.80</div>
+                                        </div>
+                                        <div class="card-details">
+                                            <div>
+                                                <div class="card-holder-label">Card Holder</div>
+                                                <div class="card-holder-name" id="cardDisplayName">Alex Mercer</div>
+                                            </div>
+                                            <div>
+                                                <div class="card-expiry-label">Expires</div>
+                                                <div class="card-expiry-date" id="cardDisplayExpiry">12/29</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="card-face card-back">
+                                        <div class="card-black-stripe"></div>
+                                        <div style="font-size: 9px; color: rgba(255,255,255,0.5); padding: 10px 20px 0;">CUSTOMER SERVICE: +1 800 555 STACK</div>
+                                        <div class="card-cvv-stripe">
+                                            <div class="card-signature"></div>
+                                            <div class="cvv-code">714</div>
+                                        </div>
+                                        <div style="font-size:8px; color:rgba(255,255,255,0.4); text-align:center; padding: 10px 20px;">
+                                            This card remains property of STACKLY Bank. Click card to flip back.
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h2 style="margin-bottom: 20px; font-size: 18px; font-weight:600;">Account Summaries</h2>
+                            
+                            <div class="stats-grid" style="grid-template-columns: 1fr; gap: 16px;">
+                                <div class="stats-card glass-panel" style="background:#ffffff;">
+                                    <div class="stats-info">
+                                        <h3>Active Vault Balance</h3>
+                                        <div class="value" id="accountBalance">$24,590.80</div>
+                                        <div class="trend trend-up">
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="width:12px;height:12px;"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>
+                                            Checking ...882
+                                        </div>
+                                    </div>
+                                    <div class="stats-icon" style="background: rgba(214, 34, 70, 0.05); color: var(--primary);">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                    </div>
+                                </div>
+
+                                <div class="stats-card glass-panel" style="background:#ffffff;">
+                                    <div class="stats-info">
+                                        <h3>Available Credit Limit</h3>
+                                        <div class="value" id="creditLimit">$50,000.00</div>
+                                        <div class="trend text-primary">Pre-Approved Line</div>
+                                    </div>
+                                    <div class="stats-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" style="width:24px;height:24px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="transfer-section" class="content-section">
+                    <div style="max-width: 600px; margin: 0 auto;">
+                        <div class="dashboard-card-form glass-panel">
+                            <h2>
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" style="width:20px;height:20px;"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" /></svg>
+                                Domestic Money Transfer
+                            </h2>
+                            <form id="moneyTransferForm">
+                                <div class="form-group">
+                                    <label for="transferRecipient">Recipient Full Name</label>
+                                    <div class="input-wrapper">
+                                        <input type="text" id="transferRecipient" class="form-input" placeholder="e.g. Sarah Connor" style="padding-left: 16px;" required autocomplete="off">
+                                    </div>
+                                </div>
+                                
+                                <div class="grid-form-row">
+                                    <div class="form-group">
+                                        <label for="transferBank">Recipient Bank</label>
+                                        <div class="input-wrapper">
+                                            <select id="transferBank" class="form-input" style="padding-left: 16px;" required>
+                                                <option value="STACKLY" selected>STACKLY Bank</option>
+                                                <option value="Chase Bank">Chase Bank</option>
+                                                <option value="Bank of America">Bank of America</option>
+                                                <option value="HSBC Financial">HSBC Financial</option>
+                                                <option value="Wells Fargo">Wells Fargo</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="transferAccount">Account Number</label>
+                                        <div class="input-wrapper">
+                                            <input type="text" id="transferAccount" class="form-input" placeholder="e.g. 100984920" style="padding-left: 16px;" required autocomplete="off">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="transferAmount">Transfer Amount ($ USD)</label>
+                                    <div class="input-wrapper">
+                                        <span style="position: absolute; left: 16px; font-weight:600; color: var(--text-primary);">$</span>
+                                        <input type="number" id="transferAmount" class="form-input" placeholder="0.00" min="0.01" step="0.01" style="padding-left: 32px;" required autocomplete="off">
+                                    </div>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary" style="margin-top:10px;">Authorize Transfer</button>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="transactions-section" class="content-section">
+                    <div class="table-title-bar">
+                        <h2>Transaction History Ledger</h2>
+                    </div>
+                    <div class="table-container glass-panel">
+                        <table class="custom-table">
+                            <thead>
+                                <tr>
+                                    <th>Description / Transaction ID</th>
+                                    <th>Category</th>
+                                    <th>Post Date</th>
+                                    <th>Status</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody id="transactionsTableBody"></tbody>
+                        </table>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+    </div>
+
+    <div class="success-overlay" id="transferSuccessOverlay">
+        <div class="success-animation-card">
+            <div class="success-checkmark-circle">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3" style="width:40px;height:40px;"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <h3>Transfer Authorized</h3>
+            <p>Your transfer request was approved by the secure system ledger.</p>
+            <div style="background: rgba(0, 0, 0, 0.02); border-radius: var(--radius-md); padding: 12px; margin: 20px 0 0; text-align: left; font-size:13px;">
+                <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                    <span style="color: var(--text-secondary);">Amount Sent:</span>
+                    <strong style="color: var(--text-primary);" id="successTransferAmount">$0.00</strong>
+                </div>
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="color: var(--text-secondary);">Recipient:</span>
+                    <strong style="color: var(--text-primary); text-overflow:ellipsis; overflow:hidden; white-space:nowrap; max-width:160px;" id="successTransferRecipient">John Doe</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
